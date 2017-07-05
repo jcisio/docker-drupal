@@ -1,0 +1,60 @@
+version: "2"
+
+services:
+  php:
+    image: jcisio/phpfarm:latest
+    volumes:
+      - ${DOCKER_PATH_WEB}:/var/www
+    ports:
+      - "443:443"
+    labels:
+      - 'traefik.backend=php'
+      - 'traefik.port=80'
+      - 'traefik.frontend.rule=HostRegexp:{subdomain:[a-z0-9-]+}.docker.localhost'
+      - 'traefik.frontend.priority=1'
+
+  mysql:
+    image: mysql/mysql-server:5.7
+    environment:
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    volumes:
+      - ${DOCKER_PATH_MYSQL}:/var/lib/mysql
+
+  pma:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PHP_UPLOAD_MAX_FILESIZE: 1G
+      PHP_MAX_INPUT_VARS: 1G
+    labels:
+      - 'traefik.backend=pma'
+      - 'traefik.port=80'
+      - 'traefik.frontend.rule=Host:pma.docker.localhost'
+
+  mailhog:
+    image: mailhog/mailhog
+    labels:
+      - 'traefik.backend=mailhog'
+      - 'traefik.port=8025'
+      - 'traefik.frontend.rule=Host:mailhog.docker.localhost'
+
+  traefik:
+    image: traefik:latest
+    ports:
+      - "80:80"
+      - "8080:8080"
+    command: -c /dev/null --web --docker --logLevel=INFO
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  portainer:
+    image: portainer/portainer
+    command: --no-auth
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - 'traefik.backend=portainer'
+      - 'traefik.port=9000'
+      - 'traefik.frontend.rule=Host:portainer.docker.localhost'
