@@ -24,7 +24,9 @@ docroot, `project2.example.com` and `*.project2.example.com` using PHP 7.1 with
 Running the container
 ---------------------
 
-To start all containers:
+You need to [install Docker and Docker Compose](https://docs.docker.com/compose/install/) first.
+
+Then, to start all containers:
 
     docker-compose up
 
