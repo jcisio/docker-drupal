@@ -1,2 +1,61 @@
 # docker-drupal
 Easy Drupal development with multiple vhosts using Docker
+
+Configuration
+-------------
+
+Copy `.env-example` to `.env` and edit the path to PHP code base and MySQL data.
+
+You need code base (let's say `~/workspace`) for your vhost with the
+following files :
+
+* `www` folder contain different projects
+
+* `conf/apache/vhosts.conf` which each line defining a vhost:
+
+      Use vhost project1/www project1 5.6
+      Use vhost project2/www project2 7.1
+
+The above config sets up two virtual hosts: `project1.example.com` and
+`*.project1.example.com` using PHP 5.6 with `~/workspace/www/project1/www` as
+docroot, `project2.example.com` and `*.project2.example.com` using PHP 7.1 with
+`~/workspace/www/project2/www` as docroot.
+
+Running the container
+---------------------
+
+To start all containers:
+
+    docker-compose up
+
+The above command starts all containers. To stop, press `Ctrl-C`. To remove
+containers, use:
+
+    docker-compose down
+
+To ssh into a container:
+
+    docker exec -it <container id> bash
+
+You can also run arbitrary command using that same syntax:
+
+    docker exec dockerdrupal_php_1 php-5.3 -v
+
+Services
+--------
+
+The docker-compose file provides the following services:
+
+* `php`: a phpfarm instance with multiple virtual hosts and https support. A wide
+range of PHP versions (from 5.3 to 7.1) is supported. The hosts are accessible
+via `http[s]://projectname.docker.localhost`. You will need to accept the TLS
+certificate once.
+* `mysql`: MySQL server 5.7, accessible from other services.
+* `pma`: PHPMyAdmin, accessible via `http://pma.docker.localhost`.
+* `mailhog`: mailhog (mailcatcher alternative in Go), accessible via port 1025
+from other services, web interface accessible via
+`http://mailhog.docker.localhost.`
+* `traefik`: træfik reverse proxy, web interface accessible via
+`http://docker.localhost:8080`.
+* `portainer`: Docker container manager, accessible via
+`http://portainer.docker.localhost`.
