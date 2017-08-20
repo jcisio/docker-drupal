@@ -61,3 +61,16 @@ from other services, web interface accessible via
 `http://docker.localhost:8080`.
 * `portainer`: Docker container manager, accessible via
 `http://portainer.docker.localhost`.
+
+More services
+-------------
+
+* There is some scripts in the `scripts` directory. Put something like
+`source ~/projects/docker-drupal/scripts/alias.sh` in your `.bashrc` file and
+you can use the alias `DockerGo` to execute any command (like `drush`) in the
+corresponding directory inside the PHP container. However we are working to
+make pipeline (e.g. `cat dump.sql | DockerGo drush sqlc`) works.
+
+* Run nodejs in the current directory:
+
+    docker run -v "$PWD":/usr/src/app -w /usr/src/app node:4 npm install
