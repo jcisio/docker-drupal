@@ -1,60 +1,183 @@
-version: "2"
+version: "3"
 
 services:
-  php:
-    image: jcisio/phpfarm:latest
-    volumes:
-      - ${DOCKER_PATH_WEB}:/var/www
-    ports:
-      - "443:443"
-    labels:
-      - 'traefik.backend=php'
-      - 'traefik.port=80'
-      - 'traefik.frontend.rule=HostRegexp:{subdomain:[a-z0-9-]+}.docker.localhost'
-      - 'traefik.frontend.priority=1'
-
-  mysql:
-    image: mysql/mysql-server:5.7
+  mariadb:
+    image: wodby/mariadb:$MARIADB_TAG
+    container_name: "${PROJECT_NAME}_mariadb"
+    stop_grace_period: 30s
     environment:
-      MYSQL_ROOT_HOST: "%"
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
+      MYSQL_DATABASE: $DB_NAME
+      MYSQL_USER: $DB_USER
+      MYSQL_PASSWORD: $DB_PASSWORD
     volumes:
-      - ${DOCKER_PATH_MYSQL}:/var/lib/mysql
+#      - ./mariadb-init:/docker-entrypoint-initdb.d # Place init .sql file(s) here.
+      - $DOCKER_PATH_MYSQL:/var/lib/mysql
 
-  pma:
-    image: phpmyadmin/phpmyadmin
+  php71:
+    image: wodby/drupal-php:7.1-dev-$WODBY_VERSION
+    container_name: "${PROJECT_NAME}_php71"
     environment:
-      PMA_HOST: mysql
-      PMA_USER: root
-      PHP_UPLOAD_MAX_FILESIZE: 1G
-      PHP_MAX_INPUT_VARS: 1G
-    labels:
-      - 'traefik.backend=pma'
-      - 'traefik.port=80'
-      - 'traefik.frontend.rule=Host:pma.docker.localhost'
+      PHP_SENDMAIL_PATH: /usr/sbin/sendmail -t -i -S mailhog:1025
+      DB_HOST: $DB_HOST
+      DB_USER: $DB_USER
+      DB_PASSWORD: $DB_PASSWORD
+      DB_NAME: $DB_NAME
+      DB_DRIVER: $DB_DRIVER
+      PHP_FPM_USER: wodby
+      PHP_FPM_GROUP: wodby
+      COLUMNS: 80 # Set 80 columns for docker exec -it.
+      # Read instructions at https://wodby.com/docs/stacks/php/local/#xdebug
+      PHP_XDEBUG: 1
+      PHP_XDEBUG_DEFAULT_ENABLE: 1
+      PHP_XDEBUG_REMOTE_CONNECT_BACK: 0
+      PHP_IDE_CONFIG: serverName=my-ide
+      PHP_XDEBUG_IDEKEY: "my-ide"
+      PHP_XDEBUG_REMOTE_HOST: 172.17.0.1 # Linux
+      PHP_XDEBUG_REMOTE_LOG: /tmp/php-xdebug.log
+    volumes:
+      - $DOCKER_PATH_WEB:/var/www
+      - files:/mnt/files
 
   mailhog:
     image: mailhog/mailhog
+    container_name: "${PROJECT_NAME}_mailhog"
     labels:
-      - 'traefik.backend=mailhog'
-      - 'traefik.port=8025'
-      - 'traefik.frontend.rule=Host:mailhog.docker.localhost'
+      - "traefik.http.services.${PROJECT_NAME}_mailhog.loadbalancer.server.port=8025"
+      - "traefik.http.routers.${PROJECT_NAME}_mailhog.rule=Host(`mailhog.${PROJECT_BASE_URL}`)"
 
-  traefik:
-    image: traefik:latest
-    ports:
-      - "80:80"
-      - "8080:8080"
-    command: -c /dev/null --web --docker --logLevel=INFO
+  apache:
+    build: './apache/'
+    container_name: "${PROJECT_NAME}_apache"
+    depends_on:
+      - php71
+    labels:
+      - "traefik.http.routers.${PROJECT_NAME}_apache.rule=HostRegexp(`{subdomain:.+}.${PROJECT_BASE_URL}`)"
+      - "traefik.http.routers.${PROJECT_NAME}_apache.priority=1"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - $DOCKER_PATH_WEB:/var/www
+
+#  redis:
+#    container_name: "${PROJECT_NAME}_redis"
+#    image: wodby/redis:$REDIS_TAG
+
+  pma:
+    image: phpmyadmin/phpmyadmin
+    container_name: "${PROJECT_NAME}_pma"
+    environment:
+      PMA_HOST: $DB_HOST
+      PMA_USER: $DB_USER
+      PMA_PASSWORD: $DB_PASSWORD
+      PHP_UPLOAD_MAX_FILESIZE: 1G
+      PHP_MAX_INPUT_VARS: 1G
+    labels:
+      - "traefik.http.routers.${PROJECT_NAME}_pma.rule=Host(`pma.${PROJECT_BASE_URL}`)"
+
+#  solr:
+#    image: wodby/solr:$SOLR_TAG
+#    container_name: "${PROJECT_NAME}_solr"
+#    environment:
+#      SOLR_DEFAULT_CONFIG_SET: $SOLR_CONFIG_SET
+#      SOLR_HEAP: 1024m
+#    labels:
+#      - "traefik.http.routers.${PROJECT_NAME}_solr.rule=Host(`solr.${PROJECT_BASE_URL}`)"
+
+#  drupal-node:
+#    image: wodby/drupal-node:$DRUPAL_NODE_TAG
+#    container_name: "${PROJECT_NAME}_drupal_nodejs"
+#    environment:
+#       NODE_SERVICE_KEY: node-service-key
+#    labels:
+#      - "traefik.http.routers.${PROJECT_NAME}_drupal_node.rule=Host(`drupal_node.${PROJECT_BASE_URL}`)"
+#    volumes:
+#      - ./path/to/your/single-page-app:/app
+#    command: sh -c 'npm install && npm run start'
+
+#  memcached:
+#    container_name: "${PROJECT_NAME}_memcached"
+#    image: wodby/memcached:$MEMCACHED_TAG
+
+#  rsyslog:
+#    container_name: "${PROJECT_NAME}_rsyslog"
+#    image: wodby/rsyslog:$RSYSLOG_TAG
+
+#  node:
+#    image: wodby/node:$NODE_TAG
+#    container_name: "${PROJECT_NAME}_node"
+#    working_dir: /var/www/html/path/to/theme/to/build
+#    labels:
+#      - "traefik.http.services.${PROJECT_NAME}_node.loadbalancer.server.port=3000"
+#      - "traefik.http.routers.${PROJECT_NAME}_node.rule=Host(`node.${PROJECT_BASE_URL}`)"
+#    expose:
+#      - "3000"
+#    volumes:
+#      - ./:/var/www/html
+#    command: sh -c 'yarn install && yarn run start'
+
+#  blackfire:
+#    image: blackfire/blackfire
+#    container_name: "${PROJECT_NAME}_blackfire"
+#    environment:
+#      BLACKFIRE_SERVER_ID: XXXXX
+#      BLACKFIRE_SERVER_TOKEN: YYYYY
+
+#  webgrind:
+#    image: wodby/webgrind:$WEBGRIND_TAG
+#    container_name: "${PROJECT_NAME}_webgrind"
+#    environment:
+#      WEBGRIND_PROFILER_DIR: /mnt/files/xdebug/profiler
+#    labels:
+#      - "traefik.http.routers.${PROJECT_NAME}_webgrind.rule=Host(`webgrind.${PROJECT_BASE_URL}`)"
+#    volumes:
+#      - files:/mnt/files
+
+#  elasticsearch:
+#    image: wodby/elasticsearch:$ELASTICSEARCH_TAG
+#    environment:
+#      ES_JAVA_OPTS: "-Xms500m -Xmx500m"
+#    ulimits:
+#      memlock:
+#        soft: -1
+#        hard: -1
+
+#  kibana:
+#    image: wodby/kibana:$KIBANA_TAG
+#    depends_on:
+#      - elasticsearch
+#    labels:
+#      - "traefik.http.services.${PROJECT_NAME}_kibana.loadbalancer.server.port=5601"
+#      - "traefik.http.routers.${PROJECT_NAME}_kibana.rule=Host(`kibana.${PROJECT_BASE_URL}`)"
+
+#  opensmtpd:
+#    container_name: "${PROJECT_NAME}_opensmtpd"
+#    image: wodby/opensmtpd:$OPENSMTPD_TAG
+
+#  xhprof:
+#    image: wodby/xhprof:$XHPROF_TAG
+#    restart: always
+#    volumes:
+#      - files:/mnt/files
+#    labels:
+#      - "traefik.http.routers.${PROJECT_NAME}_xhprof.rule=Host(`xhprof.${PROJECT_BASE_URL}`)"
 
   portainer:
     image: portainer/portainer
-    command: --no-auth
+    container_name: "${PROJECT_NAME}_portainer"
+    command: --no-auth -H unix:///var/run/docker.sock
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
-      - 'traefik.backend=portainer'
-      - 'traefik.port=9000'
-      - 'traefik.frontend.rule=Host:portainer.docker.localhost'
+      - "traefik.http.routers.${PROJECT_NAME}_portainer.rule=Host(`portainer.${PROJECT_BASE_URL}`)"
+
+  traefik:
+    image: traefik:v2.0
+    container_name: "${PROJECT_NAME}_traefik"
+    command: --api.insecure=true --providers.docker --log.level=DEBUG
+    ports:
+      - '80:80'
+      - '8080:8080'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  files:
