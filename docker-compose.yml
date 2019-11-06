@@ -1,4 +1,28 @@
-version: "3"
+version: "3.4"
+
+x-php-environment:
+  &php-environnement
+  PHP_SENDMAIL_PATH: /usr/sbin/sendmail -t -i -S mailhog:1025
+  DB_HOST: $DB_HOST
+  DB_USER: $DB_USER
+  DB_PASSWORD: $DB_PASSWORD
+  DB_NAME: $DB_NAME
+  DB_DRIVER: $DB_DRIVER
+  PHP_FPM_USER: wodby
+  PHP_FPM_GROUP: wodby
+  COLUMNS: 80 # Set 80 columns for docker exec -it.
+  # Read instructions at https://wodby.com/docs/stacks/php/local/#xdebug
+  PHP_XDEBUG: 1
+  PHP_XDEBUG_DEFAULT_ENABLE: 1
+  PHP_XDEBUG_REMOTE_CONNECT_BACK: 0
+  PHP_IDE_CONFIG: serverName=my-ide
+  PHP_XDEBUG_IDEKEY: "my-ide"
+  PHP_XDEBUG_REMOTE_HOST: 172.17.0.1 # Linux
+  PHP_XDEBUG_REMOTE_LOG: /tmp/php-xdebug.log
+x-php-volumes:
+  &php-volumes
+  - $DOCKER_PATH_WEB:/var/www
+  - files:/mnt/files
 
 services:
   mariadb:
@@ -17,52 +41,14 @@ services:
   php5.6:
     image: wodby/drupal-php:5.6-dev-$WODBY_VERSION
     container_name: "${PROJECT_NAME}_php56"
-    environment:
-      PHP_SENDMAIL_PATH: /usr/sbin/sendmail -t -i -S mailhog:1025
-      DB_HOST: $DB_HOST
-      DB_USER: $DB_USER
-      DB_PASSWORD: $DB_PASSWORD
-      DB_NAME: $DB_NAME
-      DB_DRIVER: $DB_DRIVER
-      PHP_FPM_USER: wodby
-      PHP_FPM_GROUP: wodby
-      COLUMNS: 80 # Set 80 columns for docker exec -it.
-      # Read instructions at https://wodby.com/docs/stacks/php/local/#xdebug
-      PHP_XDEBUG: 1
-      PHP_XDEBUG_DEFAULT_ENABLE: 1
-      PHP_XDEBUG_REMOTE_CONNECT_BACK: 0
-      PHP_IDE_CONFIG: serverName=my-ide
-      PHP_XDEBUG_IDEKEY: "my-ide"
-      PHP_XDEBUG_REMOTE_HOST: 172.17.0.1 # Linux
-      PHP_XDEBUG_REMOTE_LOG: /tmp/php-xdebug.log
-    volumes:
-      - $DOCKER_PATH_WEB:/var/www
-      - files:/mnt/files
+    environment: *php-environnement
+    volumes: *php-volumes
 
   php7.1:
     image: wodby/drupal-php:7.1-dev-$WODBY_VERSION
     container_name: "${PROJECT_NAME}_php71"
-    environment:
-      PHP_SENDMAIL_PATH: /usr/sbin/sendmail -t -i -S mailhog:1025
-      DB_HOST: $DB_HOST
-      DB_USER: $DB_USER
-      DB_PASSWORD: $DB_PASSWORD
-      DB_NAME: $DB_NAME
-      DB_DRIVER: $DB_DRIVER
-      PHP_FPM_USER: wodby
-      PHP_FPM_GROUP: wodby
-      COLUMNS: 80 # Set 80 columns for docker exec -it.
-      # Read instructions at https://wodby.com/docs/stacks/php/local/#xdebug
-      PHP_XDEBUG: 1
-      PHP_XDEBUG_DEFAULT_ENABLE: 1
-      PHP_XDEBUG_REMOTE_CONNECT_BACK: 0
-      PHP_IDE_CONFIG: serverName=my-ide
-      PHP_XDEBUG_IDEKEY: "my-ide"
-      PHP_XDEBUG_REMOTE_HOST: 172.17.0.1 # Linux
-      PHP_XDEBUG_REMOTE_LOG: /tmp/php-xdebug.log
-    volumes:
-      - $DOCKER_PATH_WEB:/var/www
-      - files:/mnt/files
+    environment: *php-environnement
+    volumes: *php-volumes
 
   mailhog:
     image: mailhog/mailhog
