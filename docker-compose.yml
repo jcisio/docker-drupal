@@ -27,7 +27,7 @@ x-php-volumes:
 services:
   mariadb:
     image: wodby/mariadb:$MARIADB_TAG
-    container_name: "${PROJECT_NAME}_mariadb"
+    container_name: drupal_mariadb
     stop_grace_period: 30s
     environment:
       MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
@@ -35,47 +35,46 @@ services:
       MYSQL_USER: $DB_USER
       MYSQL_PASSWORD: $DB_PASSWORD
     volumes:
-#      - ./mariadb-init:/docker-entrypoint-initdb.d # Place init .sql file(s) here.
       - $DOCKER_PATH_MYSQL:/var/lib/mysql
 
   php5.6:
     image: wodby/drupal-php:5.6-dev-$WODBY_VERSION
-    container_name: "${PROJECT_NAME}_php56"
+    container_name: drupal_php56
     environment: *php-environnement
     volumes: *php-volumes
 
   php7.1:
     image: wodby/drupal-php:7.1-dev-$WODBY_VERSION
-    container_name: "${PROJECT_NAME}_php71"
+    container_name: drupal_php71
     environment: *php-environnement
     volumes: *php-volumes
 
   mailhog:
     image: mailhog/mailhog
-    container_name: "${PROJECT_NAME}_mailhog"
+    container_name: drupal_mailhog
     labels:
-      - "traefik.http.services.${PROJECT_NAME}_mailhog.loadbalancer.server.port=8025"
-      - "traefik.http.routers.${PROJECT_NAME}_mailhog.rule=Host(`mailhog.${PROJECT_BASE_URL}`)"
+      - "traefik.http.services.drupal_mailhog.loadbalancer.server.port=8025"
+      - "traefik.http.routers.drupal_mailhog.rule=Host(`mailhog.docker.localhost`)"
 
   apache:
     build: './apache/'
-    container_name: "${PROJECT_NAME}_apache"
+    container_name: "drupal_apache"
     depends_on:
       - php5.6
       - php7.1
     labels:
-      - "traefik.http.routers.${PROJECT_NAME}_apache.rule=HostRegexp(`{subdomain:.+}.${PROJECT_BASE_URL}`)"
-      - "traefik.http.routers.${PROJECT_NAME}_apache.priority=1"
+      - "traefik.http.routers.drupal_apache.rule=HostRegexp(`{subdomain:.+}.docker.localhost`)"
+      - "traefik.http.routers.drupal_apache.priority=1"
     volumes:
       - $DOCKER_PATH_WEB:/var/www
 
 #  redis:
-#    container_name: "${PROJECT_NAME}_redis"
+#    container_name: "drupal_redis"
 #    image: wodby/redis:$REDIS_TAG
 
   pma:
     image: phpmyadmin/phpmyadmin
-    container_name: "${PROJECT_NAME}_pma"
+    container_name: "drupal_pma"
     environment:
       PMA_HOST: $DB_HOST
       PMA_USER: $DB_USER
@@ -83,43 +82,43 @@ services:
       PHP_UPLOAD_MAX_FILESIZE: 1G
       PHP_MAX_INPUT_VARS: 1G
     labels:
-      - "traefik.http.routers.${PROJECT_NAME}_pma.rule=Host(`pma.${PROJECT_BASE_URL}`)"
+      - "traefik.http.routers.drupal_pma.rule=Host(`pma.docker.localhost`)"
 
 #  solr:
 #    image: wodby/solr:$SOLR_TAG
-#    container_name: "${PROJECT_NAME}_solr"
+#    container_name: "drupal_solr"
 #    environment:
 #      SOLR_DEFAULT_CONFIG_SET: $SOLR_CONFIG_SET
 #      SOLR_HEAP: 1024m
 #    labels:
-#      - "traefik.http.routers.${PROJECT_NAME}_solr.rule=Host(`solr.${PROJECT_BASE_URL}`)"
+#      - "traefik.http.routers.drupal_solr.rule=Host(`solr.docker.localhost`)"
 
 #  drupal-node:
 #    image: wodby/drupal-node:$DRUPAL_NODE_TAG
-#    container_name: "${PROJECT_NAME}_drupal_nodejs"
+#    container_name: "drupal_drupal_nodejs"
 #    environment:
 #       NODE_SERVICE_KEY: node-service-key
 #    labels:
-#      - "traefik.http.routers.${PROJECT_NAME}_drupal_node.rule=Host(`drupal_node.${PROJECT_BASE_URL}`)"
+#      - "traefik.http.routers.drupal_drupal_node.rule=Host(`drupal_node.docker.localhost`)"
 #    volumes:
 #      - ./path/to/your/single-page-app:/app
 #    command: sh -c 'npm install && npm run start'
 
 #  memcached:
-#    container_name: "${PROJECT_NAME}_memcached"
+#    container_name: "drupal_memcached"
 #    image: wodby/memcached:$MEMCACHED_TAG
 
 #  rsyslog:
-#    container_name: "${PROJECT_NAME}_rsyslog"
+#    container_name: "drupal_rsyslog"
 #    image: wodby/rsyslog:$RSYSLOG_TAG
 
 #  node:
 #    image: wodby/node:$NODE_TAG
-#    container_name: "${PROJECT_NAME}_node"
+#    container_name: "drupal_node"
 #    working_dir: /var/www/html/path/to/theme/to/build
 #    labels:
-#      - "traefik.http.services.${PROJECT_NAME}_node.loadbalancer.server.port=3000"
-#      - "traefik.http.routers.${PROJECT_NAME}_node.rule=Host(`node.${PROJECT_BASE_URL}`)"
+#      - "traefik.http.services.drupal_node.loadbalancer.server.port=3000"
+#      - "traefik.http.routers.drupal_node.rule=Host(`node.docker.localhost`)"
 #    expose:
 #      - "3000"
 #    volumes:
@@ -128,18 +127,18 @@ services:
 
 #  blackfire:
 #    image: blackfire/blackfire
-#    container_name: "${PROJECT_NAME}_blackfire"
+#    container_name: "drupal_blackfire"
 #    environment:
 #      BLACKFIRE_SERVER_ID: XXXXX
 #      BLACKFIRE_SERVER_TOKEN: YYYYY
 
 #  webgrind:
 #    image: wodby/webgrind:$WEBGRIND_TAG
-#    container_name: "${PROJECT_NAME}_webgrind"
+#    container_name: "drupal_webgrind"
 #    environment:
 #      WEBGRIND_PROFILER_DIR: /mnt/files/xdebug/profiler
 #    labels:
-#      - "traefik.http.routers.${PROJECT_NAME}_webgrind.rule=Host(`webgrind.${PROJECT_BASE_URL}`)"
+#      - "traefik.http.routers.drupal_webgrind.rule=Host(`webgrind.docker.localhost`)"
 #    volumes:
 #      - files:/mnt/files
 
@@ -157,11 +156,11 @@ services:
 #    depends_on:
 #      - elasticsearch
 #    labels:
-#      - "traefik.http.services.${PROJECT_NAME}_kibana.loadbalancer.server.port=5601"
-#      - "traefik.http.routers.${PROJECT_NAME}_kibana.rule=Host(`kibana.${PROJECT_BASE_URL}`)"
+#      - "traefik.http.services.drupal_kibana.loadbalancer.server.port=5601"
+#      - "traefik.http.routers.drupal_kibana.rule=Host(`kibana.docker.localhost`)"
 
 #  opensmtpd:
-#    container_name: "${PROJECT_NAME}_opensmtpd"
+#    container_name: "drupal_opensmtpd"
 #    image: wodby/opensmtpd:$OPENSMTPD_TAG
 
 #  xhprof:
@@ -170,20 +169,20 @@ services:
 #    volumes:
 #      - files:/mnt/files
 #    labels:
-#      - "traefik.http.routers.${PROJECT_NAME}_xhprof.rule=Host(`xhprof.${PROJECT_BASE_URL}`)"
+#      - "traefik.http.routers.drupal_xhprof.rule=Host(`xhprof.docker.localhost`)"
 
   portainer:
     image: portainer/portainer
-    container_name: "${PROJECT_NAME}_portainer"
+    container_name: "drupal_portainer"
     command: --no-auth -H unix:///var/run/docker.sock
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
-      - "traefik.http.routers.${PROJECT_NAME}_portainer.rule=Host(`portainer.${PROJECT_BASE_URL}`)"
+      - "traefik.http.routers.drupal_portainer.rule=Host(`portainer.docker.localhost`)"
 
   traefik:
     image: traefik:v2.0
-    container_name: "${PROJECT_NAME}_traefik"
+    container_name: "drupal_traefik"
     command: --api.insecure=true --providers.docker --log.level=DEBUG
     ports:
       - '80:80'

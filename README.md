@@ -9,16 +9,16 @@ Copy `.env-example` to `.env` and edit the path to PHP code base and MySQL data.
 You need code base (let's say `~/workspace`) for your vhost with the
 following files :
 
-* `www` folder contain different projects
+* `html` folder contain different projects
 
 * `conf/apache/vhosts.conf` which each line defining a vhost:
 
-      Use vhost project1/www project1 5.6
-      Use vhost project2/www project2 7.1
+      Use vhost project1 project1/www 5.6
+      Use vhost project2 project2/www 7.1
 
-The above config sets up two virtual hosts: `project1.example.com` and
-`*.project1.example.com` using PHP 5.6 with `~/workspace/www/project1/www` as
-docroot, `project2.example.com` and `*.project2.example.com` using PHP 7.1 with
+The above config sets up two virtual hosts: `project1.docker.localhost` and
+`*.project1.docker.localhost` using PHP 5.6 with `~/workspace/www/project1/www` as
+docroot, `project2.docker.localhost` and `*.project2.docker.localhost` using PHP 7.1 with
 `~/workspace/www/project2/www` as docroot.
 
 Running the container
