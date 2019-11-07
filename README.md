@@ -1,5 +1,10 @@
 # docker-drupal
-Easy Drupal development with multiple vhosts using Docker
+Easy Drupal development with multiple vhosts using Docker.
+
+Quick test
+----------
+
+To test quickly, run `./generate.sh`, it will create a `tests` folder with the intended structure and example files, run docker-compose and open example urls in browser. When finish testing, press Ctrl-C to close docker-compose and clean up the `tests` folder.
 
 Configuration
 -------------
