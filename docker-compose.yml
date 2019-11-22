@@ -77,8 +77,8 @@ services:
     container_name: "drupal_pma"
     environment:
       PMA_HOST: $DB_HOST
-      PMA_USER: $DB_USER
-      PMA_PASSWORD: $DB_PASSWORD
+      PMA_USER: root
+      PMA_PASSWORD: $DB_ROOT_PASSWORD
       PHP_UPLOAD_MAX_FILESIZE: 1G
       PHP_MAX_INPUT_VARS: 1G
     labels:
