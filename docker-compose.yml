@@ -4,9 +4,8 @@ x-php-environment:
   &php-environnement
   PHP_SENDMAIL_PATH: /usr/sbin/sendmail -t -i -S mailhog:1025
   DB_HOST: $DB_HOST
-  DB_USER: $DB_USER
-  DB_PASSWORD: $DB_PASSWORD
-  DB_NAME: $DB_NAME
+  DB_USER: root
+  DB_PASSWORD: $DB_ROOT_PASSWORD
   DB_DRIVER: $DB_DRIVER
   PHP_FPM_USER: wodby
   PHP_FPM_GROUP: wodby
@@ -31,9 +30,7 @@ services:
     stop_grace_period: 30s
     environment:
       MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
-      MYSQL_DATABASE: $DB_NAME
-      MYSQL_USER: $DB_USER
-      MYSQL_PASSWORD: $DB_PASSWORD
+      MYSQL_INTERACTIVE_TIMEOUT: 3600
     volumes:
       - $DOCKER_PATH_MYSQL:/var/lib/mysql
 
@@ -97,6 +94,8 @@ services:
       PHP_MAX_INPUT_VARS: 1G
     labels:
       - "traefik.http.routers.drupal_pma.rule=Host(`pma.docker.localhost`)"
+    volumes:
+      - ./phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
 
 #  solr:
 #    image: wodby/solr:$SOLR_TAG
