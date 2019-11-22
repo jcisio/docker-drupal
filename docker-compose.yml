@@ -18,6 +18,8 @@ x-php-environment:
   PHP_XDEBUG_IDEKEY: "my-ide"
   PHP_XDEBUG_REMOTE_HOST: 172.17.0.1 # Linux
   PHP_XDEBUG_REMOTE_LOG: /tmp/php-xdebug.log
+  XDG_CONFIG_HOME: /var/www/conf
+  HISTFILE: /var/www/conf/.bash_history
 x-php-volumes:
   &php-volumes
   - $DOCKER_PATH_WEB:/var/www
