@@ -49,6 +49,18 @@ services:
     environment: *php-environnement
     volumes: *php-volumes
 
+  php7.2:
+    image: wodby/drupal-php:7.2-dev-$WODBY_VERSION
+    container_name: drupal_php72
+    environment: *php-environnement
+    volumes: *php-volumes
+
+  php7.3:
+    image: wodby/drupal-php:7.3-dev-$WODBY_VERSION
+    container_name: drupal_php73
+    environment: *php-environnement
+    volumes: *php-volumes
+
   mailhog:
     image: mailhog/mailhog
     container_name: drupal_mailhog
@@ -62,6 +74,8 @@ services:
     depends_on:
       - php5.6
       - php7.1
+      - php7.2
+      - php7.3
     labels:
       - "traefik.http.routers.drupal_apache.rule=HostRegexp(`{subdomain:.+}.docker.localhost`)"
       - "traefik.http.routers.drupal_apache.priority=1"
