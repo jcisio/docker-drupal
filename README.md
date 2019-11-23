@@ -16,6 +16,8 @@ following files :
 
 * `html` folder contain different projects
 
+* `cache` folder for persistent cache storage like Bash history or Drush cache.
+
 * `conf/apache/vhosts.conf` which each line defining a vhost:
 
       Use vhost project1 project1/www 5.6

@@ -20,6 +20,7 @@ x-php-environment:
   PHP_XDEBUG_REMOTE_LOG: /tmp/php-xdebug.log
   XDG_CONFIG_HOME: /var/www/conf
   HISTFILE: /var/www/conf/.bash_history
+  CACHE_PREFIX: /var/www/conf
 x-php-volumes:
   &php-volumes
   - $DOCKER_PATH_WEB:/var/www
