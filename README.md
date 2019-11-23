@@ -4,17 +4,19 @@ Easy Drupal development with multiple vhosts using Docker.
 Quick test
 ----------
 
-To test quickly, run `./generate.sh`, it will create a `tests` folder with the intended structure and example files, run docker-compose and open example urls in browser. When finish testing, press Ctrl-C to close docker-compose and clean up the `tests` folder.
+To test quickly, run `./demo.sh`, it will run `docker-compose` with the `demo` folder and open example urls in browser. When finish testing, press Ctrl-C to clean up containers.
 
 Configuration
 -------------
 
-Copy `.env-example` to `.env` and edit the path to PHP code base and MySQL data.
+Export the path to PHP code base and MySQL data into environment variables. You can put them in ~/.profile so that they won't be lost after reboot.
 
-You need code base (let's say `~/workspace`) for your vhost with the
-following files :
+    export DOCKER_PATH_WEB=/home/drupal/web
+    export DOCKER_PATH_MYSQL=/home/drupal/mysql
 
-* `html` folder contain different projects
+You need code base (let's say `~/web`) for your vhost with the following files:
+
+* `html` folder contain different projects. All your files should be here.
 
 * `cache` folder for persistent cache storage like Bash history or Drush cache.
 
@@ -27,6 +29,8 @@ The above config sets up two virtual hosts: `project1.docker.localhost` and
 `*.project1.docker.localhost` using PHP 5.6 with `~/workspace/www/project1/www` as
 docroot, `project2.docker.localhost` and `*.project2.docker.localhost` using PHP 7.1 with
 `~/workspace/www/project2/www` as docroot.
+
+Check the `demo` folder and the `demo.sh` script for an example.
 
 Running the container
 ---------------------
