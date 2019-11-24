@@ -13,10 +13,13 @@ x-php-environment:
   # Read instructions at https://wodby.com/docs/stacks/php/local/#xdebug
   PHP_XDEBUG: 1
   PHP_XDEBUG_DEFAULT_ENABLE: 1
-  PHP_XDEBUG_REMOTE_CONNECT_BACK: 0
-  PHP_IDE_CONFIG: serverName=my-ide
-  PHP_XDEBUG_IDEKEY: "my-ide"
-  PHP_XDEBUG_REMOTE_HOST: 172.17.0.1 # Linux
+  PHP_XDEBUG_IDEKEY: ide
+  PHP_XDEBUG_REMOTE_AUTOSTART: 0
+  # remote host is important for CLI debugging, because there is no HTTP request
+  # so that the server does not know where to connect to xdebug client.
+  # In a Linux host, the IP is 172.17.0.1 (seen from the PHP container). It
+  # might be the same for other environments.
+  PHP_XDEBUG_REMOTE_HOST: 172.17.0.1
   PHP_XDEBUG_REMOTE_LOG: /tmp/php-xdebug.log
   XDG_CONFIG_HOME: /var/www/conf
   HISTFILE: /var/www/conf/.bash_history
