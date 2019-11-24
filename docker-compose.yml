@@ -11,6 +11,7 @@ x-php-environment:
   PHP_FPM_GROUP: wodby
   COLUMNS: 80 # Set 80 columns for docker exec -it.
   # Read instructions at https://wodby.com/docs/stacks/php/local/#xdebug
+  PHP_IDE_CONFIG: serverName=cli
   PHP_XDEBUG: 1
   PHP_XDEBUG_DEFAULT_ENABLE: 1
   PHP_XDEBUG_IDEKEY: ide
@@ -33,6 +34,7 @@ x-php-volumes:
   &php-volumes
   - $DOCKER_PATH_WEB:/var/www
   - files:/mnt/files
+  - ./php/bin:/var/www/html/bin
 
 services:
   mariadb:
@@ -46,25 +48,41 @@ services:
       - $DOCKER_PATH_MYSQL:/var/lib/mysql
 
   php5.6:
-    image: wodby/drupal-php:5.6-dev-$WODBY_VERSION
+    build:
+      context: ./php
+      args:
+        PHP_VERSION: 5.6
+        WODBY_VERSION: $WODBY_VERSION
     container_name: drupal_php56
     environment: *php-environnement
     volumes: *php-volumes
 
   php7.1:
-    image: wodby/drupal-php:7.1-dev-$WODBY_VERSION
+    build:
+      context: ./php
+      args:
+        PHP_VERSION: 7.1
+        WODBY_VERSION: $WODBY_VERSION
     container_name: drupal_php71
     environment: *php-environnement
     volumes: *php-volumes
 
   php7.2:
-    image: wodby/drupal-php:7.2-dev-$WODBY_VERSION
+    build:
+      context: ./php
+      args:
+        PHP_VERSION: 7.2
+        WODBY_VERSION: $WODBY_VERSION
     container_name: drupal_php72
     environment: *php-environnement
     volumes: *php-volumes
 
   php7.3:
-    image: wodby/drupal-php:7.3-dev-$WODBY_VERSION
+    build:
+      context: ./php
+      args:
+        PHP_VERSION: 7.3
+        WODBY_VERSION: $WODBY_VERSION
     container_name: drupal_php73
     environment: *php-environnement
     volumes: *php-volumes

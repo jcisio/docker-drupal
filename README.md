@@ -79,19 +79,11 @@ Xdebug is installed and enabled. However it is not auto started. To enable it in
 a browser, simply set the XDEBUG_SESSION cookie, and remove this cookie to
 disable it. Similarly, in CLI mode (inside a PHP container), set the
 XDEBUG_CONFIG variable (e.g. `export XDEBUG_CONFIG="idekey=ide"`) to enabled and
-remove that variable to disable Xdebug.
+remove that variable to disable Xdebug. There are two aliases `XdebugOn` and
+`XdebugOff` to help you to turn on/off Xdebug in CLI.
 
 In the first request, your IDE will ask for path mapping and save it for later
-requests, based on the hostname (e.g. `p2.docker.localhost`). When debugging in
-CLI mode, you need to specify the hostname so that your IDE know to use the
-mapping in which project. To set the hostname in CLI:
-
-```
-export PHP_IDE_CONFIG="serverName=p2.docker.localhost"
-```
-
-I have to admit that there should be an easier way to setup the mapping
-automatically for all projects, but have not found it.
+requests.
 
 More services
 -------------
