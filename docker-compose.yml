@@ -34,7 +34,6 @@ x-php-volumes:
   &php-volumes
   - $DOCKER_PATH_WEB:/var/www
   - files:/mnt/files
-  - ./php/bin:/var/www/html/bin
   - $SSH_AUTH_SOCK:/ssh-agent
 
 services:
