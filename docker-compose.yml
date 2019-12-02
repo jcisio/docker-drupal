@@ -134,18 +134,7 @@ services:
 #      SOLR_HEAP: 1024m
 #    labels:
 #      - "traefik.http.routers.drupal_solr.rule=Host(`solr.docker.localhost`)"
-
-#  drupal-node:
-#    image: wodby/drupal-node:$DRUPAL_NODE_TAG
-#    container_name: "drupal_drupal_nodejs"
-#    environment:
-#       NODE_SERVICE_KEY: node-service-key
-#    labels:
-#      - "traefik.http.routers.drupal_drupal_node.rule=Host(`drupal_node.docker.localhost`)"
-#    volumes:
-#      - ./path/to/your/single-page-app:/app
-#    command: sh -c 'npm install && npm run start'
-
+#
 #  memcached:
 #    container_name: "drupal_memcached"
 #    image: wodby/memcached:$MEMCACHED_TAG
@@ -154,18 +143,11 @@ services:
 #    container_name: "drupal_rsyslog"
 #    image: wodby/rsyslog:$RSYSLOG_TAG
 
-#  node:
-#    image: wodby/node:$NODE_TAG
-#    container_name: "drupal_node"
-#    working_dir: /var/www/html/path/to/theme/to/build
-#    labels:
-#      - "traefik.http.services.drupal_node.loadbalancer.server.port=3000"
-#      - "traefik.http.routers.drupal_node.rule=Host(`node.docker.localhost`)"
-#    expose:
-#      - "3000"
-#    volumes:
-#      - ./:/var/www/html
-#    command: sh -c 'yarn install && yarn run start'
+  node:
+    build: ./node
+    container_name: "drupal_node"
+    volumes:
+      - $DOCKER_PATH_WEB:/var/www
 
 #  blackfire:
 #    image: blackfire/blackfire
