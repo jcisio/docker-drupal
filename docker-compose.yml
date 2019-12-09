@@ -32,7 +32,7 @@ x-php-environment: &php-environnement
   CACHE_PREFIX: /var/www/conf
 x-php-volumes: &php-volumes
   - $DOCKER_PATH_WEB:/var/www
-  - files:/mnt/files
+  - $DOCKER_PATH_WEB/cache:/mnt/files
   - $SSH_AUTH_SOCK:/ssh-agent
 x-php-base: &php-base
   environment: *php-environnement
@@ -185,13 +185,14 @@ services:
 #    container_name: "drupal_opensmtpd"
 #    image: wodby/opensmtpd:$OPENSMTPD_TAG
 
-#  xhprof:
-#    image: wodby/xhprof:$XHPROF_TAG
-#    restart: always
-#    volumes:
-#      - files:/mnt/files
-#    labels:
-#      - "traefik.http.routers.drupal_xhprof.rule=Host(`xhprof.docker.localhost`)"
+  xhprof:
+    image: wodby/xhprof:$XHPROF_TAG
+    container_name: drupal_xhprof
+    restart: always
+    volumes:
+     - $DOCKER_PATH_WEB/cache:/mnt/files
+    labels:
+      - "traefik.http.routers.drupal_xhprof.rule=Host(`xhprof.docker.localhost`)"
 
   portainer:
     image: portainer/portainer
@@ -211,6 +212,3 @@ services:
       - '8080:8080'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-
-volumes:
-  files:
