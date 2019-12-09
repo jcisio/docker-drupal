@@ -1,7 +1,6 @@
 version: "3.4"
 
-x-php-environment:
-  &php-environnement
+x-php-environment: &php-environnement
   PHP_SENDMAIL_PATH: /usr/sbin/sendmail -t -i -S mailhog:1025
   DB_HOST: $DB_HOST
   DB_USER: root
@@ -27,14 +26,17 @@ x-php-environment:
   PHP_XDEBUG_REMOTE_CONNECT_BACK: 0
   PHP_XDEBUG_REMOTE_HOST: 172.17.0.1
   PHP_XDEBUG_REMOTE_LOG: /tmp/php-xdebug.log
+  PHP_XHPROF: 1
   XDG_CONFIG_HOME: /var/www/conf
   HISTFILE: /var/www/conf/.bash_history
   CACHE_PREFIX: /var/www/conf
-x-php-volumes:
-  &php-volumes
+x-php-volumes: &php-volumes
   - $DOCKER_PATH_WEB:/var/www
   - files:/mnt/files
   - $SSH_AUTH_SOCK:/ssh-agent
+x-php-base: &php-base
+  environment: *php-environnement
+  volumes: *php-volumes
 
 services:
   mariadb:
@@ -48,44 +50,40 @@ services:
       - $DOCKER_PATH_MYSQL:/var/lib/mysql
 
   php5.6:
+    <<: *php-base
     build:
       context: ./php
       args:
         PHP_VERSION: 5.6
         WODBY_VERSION: $WODBY_VERSION
     container_name: drupal_php56
-    environment: *php-environnement
-    volumes: *php-volumes
 
   php7.1:
+    <<: *php-base
     build:
       context: ./php
       args:
         PHP_VERSION: 7.1
         WODBY_VERSION: $WODBY_VERSION
     container_name: drupal_php71
-    environment: *php-environnement
-    volumes: *php-volumes
 
   php7.2:
+    <<: *php-base
     build:
       context: ./php
       args:
         PHP_VERSION: 7.2
         WODBY_VERSION: $WODBY_VERSION
     container_name: drupal_php72
-    environment: *php-environnement
-    volumes: *php-volumes
 
   php7.3:
+    <<: *php-base
     build:
       context: ./php
       args:
         PHP_VERSION: 7.3
         WODBY_VERSION: $WODBY_VERSION
     container_name: drupal_php73
-    environment: *php-environnement
-    volumes: *php-volumes
 
   mailhog:
     image: mailhog/mailhog
