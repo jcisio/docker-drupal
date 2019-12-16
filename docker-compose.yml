@@ -124,7 +124,19 @@ services:
     volumes:
       - ./phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
 
-#  solr:
+  solr8:
+    image: solr:8
+    container_name: "drupal_solr8"
+    labels:
+      - "traefik.http.routers.drupal_solr8.rule=Host(`solr8.docker.localhost`)"
+
+  solr6:
+    image: solr:6
+    container_name: "drupal_solr6"
+    labels:
+      - "traefik.http.routers.drupal_solr6.rule=Host(`solr6.docker.localhost`)"
+
+  #  solr:
 #    image: wodby/solr:$SOLR_TAG
 #    container_name: "drupal_solr"
 #    environment:
