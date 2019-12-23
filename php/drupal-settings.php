@@ -23,3 +23,5 @@ if (isset($databases['default']['default']['database']) && !isset($databases['de
     $databases['default']['default'] += $_db;
   }
 }
+// Drupal 8.
+$settings['trusted_host_patterns'][] = '\.docker\.localhost$';
