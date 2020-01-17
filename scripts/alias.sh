@@ -10,7 +10,7 @@ DockerGo() {
   # @todo detect PHP version.
   RELATIVE_PATH=${PWD/#$DOCKER_PATH_WEB\/html\//}
   VHOST_FILE="$DOCKER_PATH_WEB/conf/apache/vhosts.conf"
-  PHP_VERSION=$(grep $RELATIVE_PATH $VHOST_FILE | awk '{print $NF}')
+  PHP_VERSION=$(grep $RELATIVE_PATH $VHOST_FILE | head -n 1 | awk '{print $NF}')
   if [[ $PHP_VERSION =~ ^[57].[0-9]$ ]]; then
     CONTAINER=php${PHP_VERSION/./}
   else
