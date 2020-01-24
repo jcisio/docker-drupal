@@ -71,6 +71,7 @@ from other services, web interface accessible via
 `http://docker.localhost:8080`.
 * `portainer`: Docker container manager, accessible via
 `http://portainer.docker.localhost`.
+* `xhprof`: Web viewer for xhprof, accessible via `http://xhprof.docker.localhost/`
 
 ## Xdebug
 
@@ -83,6 +84,33 @@ remove that variable to disable Xdebug. There are two aliases `XdebugOn` and
 
 In the first request, your IDE will ask for path mapping and save it for later
 requests.
+
+## Xhprof
+
+If you use the latest version of [XHProf contrib module](https://www.drupal.org/project/xhprof), then you don't have to do anything. XHProf by Tideways is enabled in PHP by default, and the module is already shipped with a viewer.
+
+If you don't, then see https://wodby.com/docs/stacks/php/containers/#xhprof for information. You can use use the following snippet for manual profiling:
+
+```PHP
+if (extension_loaded('tideways_xhprof')) {
+  tideways_xhprof_enable(TIDEWAYS_XHPROF_FLAGS_MEMORY | TIDEWAYS_XHPROF_FLAGS_CPU);
+}
+
+// Code which should be profiled.
+// ...
+
+// Store profile.
+if (extension_loaded('tideways_xhprof')) {
+  $xhprof_out = '/mnt/files/private/xhprof';
+  if (!file_exists($xhprof_out)) {
+    mkdir($xhprof_out);
+  }
+
+  file_put_contents(sprintf('%s/%s.%s.xhprof', $xhprof_out, uniqid(), 'web'), serialize(tideways_xhprof_disable()));
+}
+```
+
+The XHProf viewer is available at `http://xhprof.docker.localhost`
 
 More services
 -------------
