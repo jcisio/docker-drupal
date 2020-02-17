@@ -45,6 +45,8 @@ services:
     stop_grace_period: 30s
     environment:
       MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
+      MYSQL_INTERACTIVE_TIMEOUT: $MYSQL_INTERACTIVE_TIMEOUT
+      MYSQL_WAIT_TIMEOUT: $MYSQL_WAIT_TIMEOUT
     volumes:
       - $DOCKER_PATH_MYSQL:/var/lib/mysql
 
