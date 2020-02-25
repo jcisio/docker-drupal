@@ -9,4 +9,5 @@ fi
 
 # Otherwise, run our self made script to watch all Gulp-enabled folders.
 export DISABLE_NOTIFIER=1
-find . -name '*.theme' -exec sh -c 'gulp-watch.sh $@' -- {} \;
+find . \( -name '*.theme' -o -name '*.info' \) -exec sh -c 'gulp-watch.sh $@' -- {} \;
+ping localhost
