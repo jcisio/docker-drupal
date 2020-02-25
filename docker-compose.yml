@@ -130,18 +130,24 @@ services:
     container_name: "drupal_solr8"
     labels:
       - "traefik.http.routers.drupal_solr8.rule=Host(`solr8.docker.localhost`)"
+    volumes:
+      - $DOCKER_PATH_WEB:/var/www
 
   solr6:
     image: solr:6
     container_name: "drupal_solr6"
     labels:
       - "traefik.http.routers.drupal_solr6.rule=Host(`solr6.docker.localhost`)"
+    volumes:
+      - $DOCKER_PATH_WEB:/var/www
 
   solr4:
     image: geerlingguy/solr:4.x
     container_name: "drupal_solr4"
     labels:
       - "traefik.http.routers.drupal_solr4.rule=Host(`solr4.docker.localhost`)"
+    volumes:
+      - $DOCKER_PATH_WEB:/var/www
 
   #  solr:
 #    image: wodby/solr:$SOLR_TAG
