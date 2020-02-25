@@ -146,6 +146,8 @@ services:
     container_name: "drupal_solr4"
     labels:
       - "traefik.http.routers.drupal_solr4.rule=Host(`solr4.docker.localhost`)"
+    expose:
+      - "8983"
     volumes:
       - $DOCKER_PATH_WEB:/var/www
 
