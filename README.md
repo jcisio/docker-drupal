@@ -119,4 +119,5 @@ More services
 `source ~/projects/docker-drupal/scripts/alias.sh` in your `.bashrc` file and
 you can use the alias `DockerGo` to execute any command (like `drush`) in the
 corresponding directory inside the PHP container. However we are working to
-make pipeline (e.g. `cat dump.sql | DockerGo drush sqlc`) works.
+make pipeline (e.g. `cat dump.sql | DockerGo drush sqlc`) works. Another alias
+is `DockerExec` that allows to quickly connect to a container.

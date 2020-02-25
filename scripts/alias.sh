@@ -18,3 +18,12 @@ DockerGo() {
   fi
   docker exec -it -e SSH_AUTH_SOCK=/ssh-agent drupal_$CONTAINER bash -c "cd ${PWD/#$DOCKER_PATH_WEB/$docker_dest}; exec $args"
 }
+
+DockerExec() {
+  if [[ "$1" == "" ]]; then
+    echo "Please specify a container name e.g. 'node' or 'ruby'."
+    return 1
+  fi
+
+  docker exec -it -u root drupal_"$1" bash
+}
