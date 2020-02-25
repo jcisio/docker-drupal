@@ -70,7 +70,7 @@ from other services, web interface accessible via
 * `traefik`: træfik reverse proxy, web interface accessible via
 `http://docker.localhost:8080`.
 * `portainer`: Docker container manager, accessible via
-`http://portainer.docker.localhost`.
+`http://portainer.docker.localhost`. From there you can read logs, open a console, check stats or inspect a container.
 * `xhprof`: Web viewer for xhprof, accessible via `http://xhprof.docker.localhost/`
 
 ## Xdebug
