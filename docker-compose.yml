@@ -137,6 +137,12 @@ services:
     labels:
       - "traefik.http.routers.drupal_solr6.rule=Host(`solr6.docker.localhost`)"
 
+  solr4:
+    image: geerlingguy/solr:4.x
+    container_name: "drupal_solr4"
+    labels:
+      - "traefik.http.routers.drupal_solr4.rule=Host(`solr4.docker.localhost`)"
+
   #  solr:
 #    image: wodby/solr:$SOLR_TAG
 #    container_name: "drupal_solr"
