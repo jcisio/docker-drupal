@@ -174,7 +174,13 @@ services:
     volumes:
       - $DOCKER_PATH_WEB:/var/www
 
-#  blackfire:
+  ruby:
+    build: ./ruby
+    container_name: "drupal_ruby"
+    volumes:
+      - $DOCKER_PATH_WEB:/var/www
+
+  #  blackfire:
 #    image: blackfire/blackfire
 #    container_name: "drupal_blackfire"
 #    environment:
