@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# This function find the corresponding PHP container and log into it.
+# The PHP version is detected using the vhost.conf file. However, please note
+# that it is pointed to docroot in the vhost configuration, so you must be
+# inside docroot to be detected correctly.
 DockerGo() {
   docker_dest="/var/www"
   if [[ "$@" != "" ]]; then
@@ -7,10 +11,14 @@ DockerGo() {
   else
     args=bash
   fi
-  # @todo detect PHP version.
   RELATIVE_PATH=${PWD/#$DOCKER_PATH_WEB\/html\//}
   VHOST_FILE="$DOCKER_PATH_WEB/conf/apache/vhosts.conf"
-  PHP_VERSION=$(grep $RELATIVE_PATH $VHOST_FILE | head -n 1 | awk '{print $NF}')
+  cat $VHOST_FILE | while read p; do
+    DOCROOT=$(echo $p | cut -f4 -d' ')
+    if [[ $RELATIVE_PATH == $DOCROOT* ]]; then
+      PHP_VERSION=$(echo $p | cut -f5 -d' ')
+    fi
+  done
   if [[ $PHP_VERSION =~ ^[57].[0-9]$ ]]; then
     CONTAINER=php${PHP_VERSION/./}
   else
