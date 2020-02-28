@@ -86,6 +86,15 @@ services:
         WODBY_VERSION: $WODBY_VERSION
     container_name: drupal_php73
 
+  php7.4:
+    <<: *php-base
+    build:
+      context: ./php
+      args:
+        PHP_VERSION: 7.4
+        WODBY_VERSION: $WODBY_VERSION
+    container_name: drupal_php74
+
   mailhog:
     image: mailhog/mailhog
     container_name: drupal_mailhog
