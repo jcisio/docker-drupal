@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+_DockerContainerPath() {
+  echo -n ${PWD/#$DOCKER_PATH_WEB\/html\//}
+}
+
 # This function find the corresponding PHP container and log into it.
 # The PHP version is detected using the vhost.conf file. However, please note
 # that it is pointed to docroot in the vhost configuration, so you must be
@@ -11,7 +15,7 @@ DockerGo() {
   else
     args=bash
   fi
-  RELATIVE_PATH=${PWD/#$DOCKER_PATH_WEB\/html\//}
+  RELATIVE_PATH=`_DockerContainerPath`
   VHOST_FILE="$DOCKER_PATH_WEB/conf/apache/vhosts.conf"
   cat $VHOST_FILE | while read p; do
     DOCROOT=$(echo $p | cut -f4 -d' ')
@@ -33,5 +37,11 @@ DockerExec() {
     return 1
   fi
 
-  docker exec -it -u root drupal_"$1" bash
+  workingpath="/"
+  webcontainers=(apache node ruby)
+  for value in "${webcontainers[@]}"; do
+    [[ "$1" = "$value" ]] && workingpath="/var/www/html/`_DockerContainerPath`"
+  done
+
+  docker exec -it -u root -w "$workingpath" drupal_"$1" bash
 }
