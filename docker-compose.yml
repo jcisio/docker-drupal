@@ -8,6 +8,7 @@ x-php-environment: &php-environnement
   DB_DRIVER: $DB_DRIVER
   PHP_FPM_USER: wodby
   PHP_FPM_GROUP: wodby
+  PHP_DATE_TIMEZONE: Europe/Paris
   COLUMNS: 80 # Set 80 columns for docker exec -it.
   # Read instructions at https://wodby.com/docs/stacks/php/local/#xdebug
   PHP_IDE_CONFIG: serverName=cli
