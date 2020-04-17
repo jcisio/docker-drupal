@@ -150,6 +150,14 @@ services:
     volumes:
       - $DOCKER_PATH_WEB:/var/www
 
+  solr5:
+    image: solr:5
+    container_name: "drupal_solr5"
+    labels:
+      - "traefik.http.routers.drupal_solr5.rule=Host(`solr5.docker.localhost`)"
+    volumes:
+      - $DOCKER_PATH_WEB:/var/www
+
   solr4:
     image: geerlingguy/solr:4.x
     container_name: "drupal_solr4"
