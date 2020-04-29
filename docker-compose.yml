@@ -142,6 +142,7 @@ services:
       - "traefik.http.routers.drupal_solr8.rule=Host(`solr8.docker.localhost`)"
     volumes:
       - $DOCKER_PATH_WEB:/var/www
+      - $DOCKER_PATH_WEB/cache/solr8.cores:/opt/solr/server/solr/mycores
 
   solr6:
     image: solr:6
@@ -150,6 +151,7 @@ services:
       - "traefik.http.routers.drupal_solr6.rule=Host(`solr6.docker.localhost`)"
     volumes:
       - $DOCKER_PATH_WEB:/var/www
+      - $DOCKER_PATH_WEB/cache/solr6.cores:/opt/solr/server/solr/mycores
 
   solr5:
     image: solr:5
@@ -158,6 +160,7 @@ services:
       - "traefik.http.routers.drupal_solr5.rule=Host(`solr5.docker.localhost`)"
     volumes:
       - $DOCKER_PATH_WEB:/var/www
+      - $DOCKER_PATH_WEB/cache/solr5.cores:/opt/solr/server/solr/mycores
 
   solr4:
     image: geerlingguy/solr:4.x
@@ -168,6 +171,7 @@ services:
       - "8983"
     volumes:
       - $DOCKER_PATH_WEB:/var/www
+      - $DOCKER_PATH_WEB/cache/solr4.cores:/opt/solr/example/solr/mycores
 
   #  solr:
 #    image: wodby/solr:$SOLR_TAG
