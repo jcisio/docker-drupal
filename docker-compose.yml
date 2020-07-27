@@ -58,7 +58,7 @@ services:
       context: ./php
       args:
         PHP_VERSION: 5.6
-        WODBY_VERSION: $WODBY_VERSION
+        WODBY_VERSION: 4.14.3
     container_name: drupal_php56
 
   php7.1:
@@ -67,7 +67,7 @@ services:
       context: ./php
       args:
         PHP_VERSION: 7.1
-        WODBY_VERSION: $WODBY_VERSION
+        WODBY_VERSION: 4.14.3
     container_name: drupal_php71
 
   php7.2:
