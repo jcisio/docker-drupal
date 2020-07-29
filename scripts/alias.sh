@@ -27,7 +27,6 @@ DockerGo() {
     DOCROOT=${DOCROOT%/public}
     DOCROOT=${DOCROOT%/site}
     DOCROOT=${DOCROOT%/docroot}
-    echo $DOCROOT
     if [[ $RELATIVE_PATH = $DOCROOT || $RELATIVE_PATH == $DOCROOT/* ]]; then
       PHP_VERSION=$(echo $p | cut -f5 -d' ')
     fi
