@@ -17,6 +17,7 @@ DockerGo() {
   fi
   RELATIVE_PATH=`_DockerContainerPath`
   VHOST_FILE="$DOCKER_PATH_WEB/conf/apache/vhosts.conf"
+  echo $RELATIVE_PATH
   cat $VHOST_FILE | while read p; do
     # Take the docroot of that host.
     DOCROOT=$(echo $p | cut -f4 -d' ')
@@ -24,7 +25,10 @@ DockerGo() {
     # project path.
     DOCROOT=${DOCROOT%/www}
     DOCROOT=${DOCROOT%/public}
-    if [[ $RELATIVE_PATH == $DOCROOT* ]]; then
+    DOCROOT=${DOCROOT%/site}
+    DOCROOT=${DOCROOT%/docroot}
+    echo $DOCROOT
+    if [[ $RELATIVE_PATH = $DOCROOT || $RELATIVE_PATH == $DOCROOT/* ]]; then
       PHP_VERSION=$(echo $p | cut -f5 -d' ')
     fi
   done
