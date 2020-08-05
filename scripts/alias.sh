@@ -17,7 +17,6 @@ DockerGo() {
   fi
   RELATIVE_PATH=`_DockerContainerPath`
   VHOST_FILE="$DOCKER_PATH_WEB/conf/apache/vhosts.conf"
-  echo $RELATIVE_PATH
   cat $VHOST_FILE | while read p; do
     # Take the docroot of that host.
     DOCROOT=$(echo $p | cut -f4 -d' ')
