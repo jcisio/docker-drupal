@@ -3,13 +3,25 @@
 /**
  * Auto configuration for Drupal.
  *
- * Just put a single line in your settings.php:
+ * Just put two lines in your settings.php:
  *
- *     $databases['default']['default']['database'] = 'myproject';
- *     require '/etc/drupal-settings.php';
+ *     # You can either use this shortcut:
+ *     $db_name = 'myproject';
+ *     # Or the long format:
+ *     # $databases['default']['default']['database'] = 'myproject';
+ *     # Then include the provided settings file. Path can not be changed.
+ *     require '/etc/drupal/settings.php';
  *
- * Then it will fill all the connection details. It will also create the database if not exists yet.
+ * Then it will fill all the connection details. It will also create the
+ * database if not exists yet. Please note that the root credentials are used,
+ * thus please make sure that it is only your local development instance.
  */
+
+if (isset($db_name)) {
+  $databases['default']['default']['database'] = $db_name;
+  unset($db_name);
+}
+
 if (isset($databases['default']['default']['database']) && !isset($databases['default']['default']['host'])) {
   $_db = [
     'host' => 'mariadb',
