@@ -36,6 +36,7 @@ x-php-volumes: &php-volumes
   - $DOCKER_PATH_WEB:/var/www
   - $DOCKER_PATH_WEB/cache:/mnt/files
   - $SSH_AUTH_SOCK:/ssh-agent
+  - $DOCKER_PATH_WEB/conf/ca-certificates:/usr/local/share/ca-certificates
 x-php-base: &php-base
   environment: *php-environnement
   volumes: *php-volumes
