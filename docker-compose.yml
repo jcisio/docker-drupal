@@ -29,9 +29,9 @@ x-php-environment: &php-environnement
   PHP_XDEBUG_REMOTE_HOST: 172.17.0.1
   PHP_XDEBUG_REMOTE_LOG: /tmp/php-xdebug.log
   PHP_XHPROF: 1
-  XDG_CONFIG_HOME: /var/www/conf
-  HISTFILE: /var/www/conf/.bash_history
-  CACHE_PREFIX: /var/www/conf
+  XDG_CONFIG_HOME: /var/www/cache
+  HISTFILE: /var/www/cache/.bash_history
+  CACHE_PREFIX: /var/www/cache
 x-php-volumes: &php-volumes
   - $DOCKER_PATH_WEB:/var/www
   - $DOCKER_PATH_WEB/cache:/mnt/files
