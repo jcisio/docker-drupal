@@ -7,8 +7,8 @@ RUN sudo mkdir /etc/drupal
 COPY php.bashrc /etc/drupal/php.bashrc
 COPY drupal-settings.php /etc/drupal/settings.php
 RUN echo "source /etc/drupal/php.bashrc" >> /home/wodby/.bashrc
-RUN echo $"[client]\
-user=root\
-password=$DBPASSWORD\
+RUN echo $"[client]\n\
+user=root\n\
+password=$DBPASSWORD\n\
 host=$DB_HOST" > /home/wodby/.my.cnf
 RUN sudo update-ca-certificates
