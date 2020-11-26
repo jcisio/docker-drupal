@@ -6,6 +6,8 @@ x-php-environment: &php-environnement
   DB_USER: root
   DB_PASSWORD: $DB_ROOT_PASSWORD
   DB_DRIVER: $DB_DRIVER
+  MYSQL_PWD: $DB_ROOT_PASSWORD
+  MYSQL_HOST: $DB_HOST
   PHP_FPM_USER: wodby
   PHP_FPM_GROUP: wodby
   PHP_DATE_TIMEZONE: Europe/Paris
