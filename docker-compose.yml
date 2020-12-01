@@ -105,7 +105,7 @@ services:
     container_name: drupal_mailhog
     labels:
       - "traefik.http.services.drupal_mailhog.loadbalancer.server.port=8025"
-      - "traefik.http.routers.drupal_mailhog.rule=Host(`mailhog.docker.localhost`)"
+      - "traefik.http.routers.drupal_mailhog.rule=Host(`mailhog.$DOCKER_HOST_LOCAL`)"
 
   apache:
     build: './apache/'
@@ -116,7 +116,7 @@ services:
       - php7.2
       - php7.3
     labels:
-      - "traefik.http.routers.drupal_apache.rule=HostRegexp(`{subdomain:.+}.docker.localhost`)"
+      - "traefik.http.routers.drupal_apache.rule=HostRegexp(`{subdomain:.+}.$DOCKER_HOST_LOCAL`,`{subdomain:.+}.$DOCKER_HOST_INTERNET`)"
       - "traefik.http.routers.drupal_apache.priority=1"
     volumes:
       - $DOCKER_PATH_WEB:/var/www
@@ -135,7 +135,7 @@ services:
       PHP_UPLOAD_MAX_FILESIZE: 1G
       PHP_MAX_INPUT_VARS: 1G
     labels:
-      - "traefik.http.routers.drupal_pma.rule=Host(`pma.docker.localhost`)"
+      - "traefik.http.routers.drupal_pma.rule=Host(`pma.$DOCKER_HOST_LOCAL`)"
     volumes:
       - ./phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php
 
@@ -143,7 +143,7 @@ services:
     image: solr:8
     container_name: "drupal_solr8"
     labels:
-      - "traefik.http.routers.drupal_solr8.rule=Host(`solr8.docker.localhost`)"
+      - "traefik.http.routers.drupal_solr8.rule=Host(`solr8.$DOCKER_HOST_LOCAL`)"
     volumes:
       - $DOCKER_PATH_WEB:/var/www
       - $DOCKER_PATH_WEB/cache/solr8.cores:/opt/solr/server/solr/mycores
@@ -152,7 +152,7 @@ services:
     image: solr:6
     container_name: "drupal_solr6"
     labels:
-      - "traefik.http.routers.drupal_solr6.rule=Host(`solr6.docker.localhost`)"
+      - "traefik.http.routers.drupal_solr6.rule=Host(`solr6.$DOCKER_HOST_LOCAL`)"
     volumes:
       - $DOCKER_PATH_WEB:/var/www
       - $DOCKER_PATH_WEB/cache/solr6.cores:/opt/solr/server/solr/mycores
@@ -161,7 +161,7 @@ services:
     image: solr:5
     container_name: "drupal_solr5"
     labels:
-      - "traefik.http.routers.drupal_solr5.rule=Host(`solr5.docker.localhost`)"
+      - "traefik.http.routers.drupal_solr5.rule=Host(`solr5.$DOCKER_HOST_LOCAL`)"
     volumes:
       - $DOCKER_PATH_WEB:/var/www
       - $DOCKER_PATH_WEB/cache/solr5.cores:/opt/solr/server/solr/mycores
@@ -170,7 +170,7 @@ services:
     image: geerlingguy/solr:4.x
     container_name: "drupal_solr4"
     labels:
-      - "traefik.http.routers.drupal_solr4.rule=Host(`solr4.docker.localhost`)"
+      - "traefik.http.routers.drupal_solr4.rule=Host(`solr4.$DOCKER_HOST_LOCAL`)"
     expose:
       - "8983"
     volumes:
@@ -184,7 +184,7 @@ services:
 #      SOLR_DEFAULT_CONFIG_SET: $SOLR_CONFIG_SET
 #      SOLR_HEAP: 1024m
 #    labels:
-#      - "traefik.http.routers.drupal_solr.rule=Host(`solr.docker.localhost`)"
+#      - "traefik.http.routers.drupal_solr.rule=Host(`solr.$DOCKER_HOST_LOCAL`)"
 #
 #  memcached:
 #    container_name: "drupal_memcached"
@@ -219,7 +219,7 @@ services:
 #    environment:
 #      WEBGRIND_PROFILER_DIR: /mnt/files/xdebug/profiler
 #    labels:
-#      - "traefik.http.routers.drupal_webgrind.rule=Host(`webgrind.docker.localhost`)"
+#      - "traefik.http.routers.drupal_webgrind.rule=Host(`webgrind.$DOCKER_HOST_LOCAL`)"
 #    volumes:
 #      - files:/mnt/files
 
@@ -238,7 +238,7 @@ services:
 #      - elasticsearch
 #    labels:
 #      - "traefik.http.services.drupal_kibana.loadbalancer.server.port=5601"
-#      - "traefik.http.routers.drupal_kibana.rule=Host(`kibana.docker.localhost`)"
+#      - "traefik.http.routers.drupal_kibana.rule=Host(`kibana.$DOCKER_HOST_LOCAL`)"
 
 #  opensmtpd:
 #    container_name: "drupal_opensmtpd"
@@ -251,7 +251,7 @@ services:
     volumes:
      - $DOCKER_PATH_WEB/cache:/mnt/files
     labels:
-      - "traefik.http.routers.drupal_xhprof.rule=Host(`xhprof.docker.localhost`)"
+      - "traefik.http.routers.drupal_xhprof.rule=Host(`xhprof.$DOCKER_HOST_LOCAL`)"
 
   portainer:
     image: portainer/portainer
@@ -260,7 +260,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
-      - "traefik.http.routers.drupal_portainer.rule=Host(`portainer.docker.localhost`)"
+      - "traefik.http.routers.drupal_portainer.rule=Host(`portainer.$DOCKER_HOST_LOCAL`)"
 
   traefik:
     image: traefik:v2.0
