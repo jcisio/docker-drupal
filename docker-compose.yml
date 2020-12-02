@@ -118,6 +118,12 @@ services:
     labels:
       - "traefik.http.routers.drupal_apache.rule=HostRegexp(`{subdomain:.+}.$DOCKER_HOST_LOCAL`,`{subdomain:.+}.$DOCKER_HOST_INTERNET`)"
       - "traefik.http.routers.drupal_apache.priority=1"
+      - traefik.http.middlewares.drupal_apache_https.redirectscheme.scheme=https
+      - traefik.http.routers.drupal_apache.entrypoints=web
+      - traefik.http.routers.drupal_apache.middlewares=drupal_apache_https@docker
+      - traefik.http.routers.drupal_apache_https.rule=HostRegexp(`{subdomain:.+}.$DOCKER_HOST_LOCAL`,`{subdomain:.+}.$DOCKER_HOST_INTERNET`)
+      - traefik.http.routers.drupal_apache_https.tls=true
+      - traefik.http.routers.drupal_apache_https.entrypoints=websecure
     volumes:
       - $DOCKER_PATH_WEB:/var/www
 
@@ -177,15 +183,6 @@ services:
       - $DOCKER_PATH_WEB:/var/www
       - $DOCKER_PATH_WEB/cache/solr4.cores:/opt/solr/example/solr/mycores
 
-  #  solr:
-#    image: wodby/solr:$SOLR_TAG
-#    container_name: "drupal_solr"
-#    environment:
-#      SOLR_DEFAULT_CONFIG_SET: $SOLR_CONFIG_SET
-#      SOLR_HEAP: 1024m
-#    labels:
-#      - "traefik.http.routers.drupal_solr.rule=Host(`solr.$DOCKER_HOST_LOCAL`)"
-#
 #  memcached:
 #    container_name: "drupal_memcached"
 #    image: wodby/memcached:$MEMCACHED_TAG
@@ -265,9 +262,17 @@ services:
   traefik:
     image: traefik:v2.0
     container_name: "drupal_traefik"
-    command: --api.insecure=true --providers.docker
+    command:
+      - --api.insecure=true
+      - --providers.docker
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+      - --providers.file.directory=/etc/traefik/dynamic_conf
     ports:
       - '80:80'
       - '8080:8080'
+      - '443:443'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/config.yml:/etc/traefik/dynamic_conf/conf.yml:ro
+      - ./apache/ssl/certs:/etc/certs:ro
