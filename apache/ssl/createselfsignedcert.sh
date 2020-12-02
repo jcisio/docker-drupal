@@ -6,8 +6,8 @@ then
   exit;
 fi
 
-# Create a new private key if one doesnt exist, or use the xeisting one if it does
-if [ -f device.key ]; then
+# Create a new private key if one doesnot exist, or use the existing one if it does
+if [ -f certs/device.key ]; then
   KEY_OPT="-key"
 else
   KEY_OPT="-keyout"
@@ -17,23 +17,26 @@ DOMAIN=$1
 COMMON_NAME=${2:-*.$1}
 SUBJECT="/C=CA/ST=None/L=NB/O=None/CN=$COMMON_NAME"
 NUM_OF_DAYS=3650
-openssl req -new -newkey rsa:2048 -sha256 -nodes $KEY_OPT device.key -subj "$SUBJECT" -out device.csr
+openssl req -new -newkey rsa:2048 -sha256 -nodes $KEY_OPT certs/device.key -subj "$SUBJECT" -out certs/$DOMAIN.csr
 cat v3.ext | sed s/%%DOMAIN%%/$COMMON_NAME/g > /tmp/__v3.ext
-openssl x509 -req -in device.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out device.crt -days $NUM_OF_DAYS -sha256 -extfile /tmp/__v3.ext
-
-# move output files to final filenames
-mv device.csr $DOMAIN.csr
-cp device.crt $DOMAIN.crt
-
-# remove temp file
-rm -f device.crt;
+openssl x509 -req -in certs/$DOMAIN.csr -CA certs/rootCA.crt -CAkey certs/rootCA.key -CAcreateserial -out certs/$DOMAIN.crt -days $NUM_OF_DAYS -sha256 -extfile /tmp/__v3.ext
+rm certs/$DOMAIN.csr
 
 echo
-echo "###########################################################################"
-echo Done!
-echo "###########################################################################"
-echo "To use these files on your server, simply copy both $DOMAIN.csr and"
+echo "\033[1;33mDone!\033[0m"
+echo
+echo "To use these files on your server, simply both $DOMAIN.crt and"
 echo "device.key to your webserver, and use like so (if Apache, for example)"
 echo
-echo "    SSLCertificateFile    /path_to_your_files/$DOMAIN.crt"
-echo "    SSLCertificateKeyFile /path_to_your_files/device.key"
+echo "    SSLCertificateFile    /path/to/$DOMAIN.crt"
+echo "    SSLCertificateKeyFile /path/to/device.key"
+echo
+echo "Then in your browser, import the root CA. Go to 'Manage certificates', choose"
+echo "'Authorities' table and import rootCA.crt."
+echo
+echo "Finally, in order to your PHP container accepts the certificate if your PHP script"
+echo "sends requests to the server, copy rootCA.crt to /usr/local/share/ca-certificates"
+echo "then run:"
+echo
+echo "    sudo update-ca-certificates"
+echo
