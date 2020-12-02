@@ -7,4 +7,4 @@ fi
 openssl genrsa -out certs/rootCA.key 2048
 openssl req -x509 -new -nodes -key certs/rootCA.key -sha256 -days 3650 -out certs/rootCA.crt \
     -subj "/C=FR/ST=75/L=Paris/O=Localhost Ltd/emailAddress=me@localhost"
-rm rootCA.srl
+rm certs/rootCA.srl
