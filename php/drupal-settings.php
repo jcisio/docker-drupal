@@ -37,3 +37,9 @@ if (isset($databases['default']['default']['database']) && !isset($databases['de
 }
 // Drupal 8.
 $settings['trusted_host_patterns'][] = '\.docker\.localhost$';
+
+// Traefik forwards traffic from https to Apache http
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+  $_SERVER['HTTPS'] = 'on';
+}
+
