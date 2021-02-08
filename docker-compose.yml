@@ -39,6 +39,7 @@ x-php-volumes: &php-volumes
   - $DOCKER_PATH_WEB/cache:/mnt/files
   - $SSH_AUTH_SOCK:/ssh-agent
   - $DOCKER_PATH_WEB/conf/ca-certificates:/usr/local/share/ca-certificates
+  - $DOCKER_PATH_WEB/conf/drush-module:/home/wodby/.drush/modules
 x-php-base: &php-base
   environment: *php-environnement
   volumes: *php-volumes
@@ -116,13 +117,7 @@ services:
       - php7.2
       - php7.3
     labels:
-      - "traefik.http.routers.drupal_apache.rule=HostRegexp(`{subdomain:.+}.$DOCKER_HOST_LOCAL`,`{subdomain:.+}.$DOCKER_HOST_INTERNET`)"
-      - "traefik.http.routers.drupal_apache.priority=1"
-      # Uncomment to redirect http to https.
-      - traefik.http.middlewares.drupal_apache_https.redirectscheme.scheme=https
-      - traefik.http.routers.drupal_apache.entrypoints=web
-      - traefik.http.routers.drupal_apache.middlewares=drupal_apache_https@docker
-      - traefik.http.routers.drupal_apache_https.rule=HostRegexp(`{subdomain:.+}.$DOCKER_HOST_LOCAL`,`{subdomain:.+}.$DOCKER_HOST_INTERNET`)
+      - traefik.http.routers.drupal_apache_https.rule=HostRegexp(`{subdomain:.+}.$DOCKER_HOST_LOCAL`)
       - traefik.http.routers.drupal_apache_https.tls=true
       - traefik.http.routers.drupal_apache_https.entrypoints=websecure
     volumes:

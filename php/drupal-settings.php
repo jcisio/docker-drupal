@@ -48,4 +48,4 @@ else {
   $settings['reverse_proxy'] = TRUE;
   $settings['reverse_proxy_addresses'] = [$_SERVER['REMOTE_ADDR']];
   $settings['trusted_host_patterns'][] = '\.docker\.localhost$';
-}
+} 
