@@ -9,10 +9,10 @@ To test quickly, run `./demo.sh`, it will run `docker-compose` with the `demo` f
 Configuration
 -------------
 
-Export the path to PHP code base and MySQL data into environment variables. You can put them in ~/.profile so that they won't be lost after reboot.
+Export the path to PHP code base and bind volumes (e.g. for MySQL or Postgres data) into environment variables. You can put them in ~/.profile so that they won't be lost after reboot.
 
     export DOCKER_PATH_WEB=/home/drupal/web
-    export DOCKER_PATH_MYSQL=/home/drupal/mysql
+    export DOCKER_PATH_VOLUMES=/home/drupal/volumes
 
 You need code base (let's say `~/web`) for your vhost with the following files:
 
@@ -60,10 +60,11 @@ Services
 The docker-compose file provides the following services:
 
 * `apache`: Apache instance with multiple virtual hosts support. The hosts are
-  accessible via `http://any.sub.domain.docker.localhost`.
+  accessible via `https://any.sub.domain.docker.localhost`.
 * `phpXY`: PHP instances with any PHP version X.Y from 5.6 to 7.3.
 * `mysql`: MariaDB (a variant of MySQL) server 10.3.
 * `pma`: PHPMyAdmin, accessible via `http://pma.docker.localhost`.
+* `adminer`: Adminer, accessible via `http://adminer.docker.localhost`.
 * `mailhog`: mailhog (mailcatcher alternative in Go), accessible via port 1025
 from other services, web interface accessible via
 `http://mailhog.docker.localhost.`
@@ -110,7 +111,7 @@ if (extension_loaded('tideways_xhprof')) {
 }
 ```
 
-The XHProf viewer is available at `http://xhprof.docker.localhost`
+The XHProf viewer is available at `https://xhprof.docker.localhost`
 
 More services
 -------------

@@ -1,6 +1,7 @@
 <h1>Project 2</h1>
 
 <ul>
+  <li><a href="http://adminer.docker.localhost/">Adminer</a></li>
   <li><a href="http://pma.docker.localhost/">PhpMyAdmin</a></li>
   <li><a href="http://mailhog.docker.localhost/">mailhog</a></li>
   <li><a href="http://xhprof.docker.localhost/">Xhprof viewer</a> (there are traces of this page)</li>

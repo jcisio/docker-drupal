@@ -17,7 +17,7 @@ x-php-environment: &php-environnement
   PHP_XDEBUG: 1
   PHP_XDEBUG_DEFAULT_ENABLE: 1
   PHP_XDEBUG_IDEKEY: ide
-  PHP_XDEBUG_REMOTE_AUTOSTART: 0
+  PHP_XDEBUG_REMOTE_AUTOSTART: 1
   PHP_XDEBUG_MAX_NESTING_LEVEL: 9999
   # In the following two variables, if "remote connect back" is set to 1, then
   # we don't have to specify remote host when there is a HTTP request, because
@@ -54,7 +54,13 @@ services:
       MYSQL_INTERACTIVE_TIMEOUT: $MYSQL_INTERACTIVE_TIMEOUT
       MYSQL_WAIT_TIMEOUT: $MYSQL_WAIT_TIMEOUT
     volumes:
-      - $DOCKER_PATH_MYSQL:/var/lib/mysql
+      - $DOCKER_PATH_VOLUMES/mysql:/var/lib/mysql
+
+  postgres:
+    image: postgres:13
+    container_name: drupal_postgres
+    environment:
+      POSTGRES_PASSWORD: $DB_ROOT_PASSWORD
 
   php5.6:
     <<: *php-base
@@ -127,9 +133,15 @@ services:
 #    container_name: "drupal_redis"
 #    image: wodby/redis:$REDIS_TAG
 
+  adminer:
+    image: adminer
+    container_name: drupal_adminer
+    labels:
+      - "traefik.http.routers.drupal_adminer.rule=Host(`adminer.$DOCKER_HOST_LOCAL`)"
+
   pma:
     image: phpmyadmin/phpmyadmin
-    container_name: "drupal_pma"
+    container_name: drupal_pma
     environment:
       PMA_HOST: $DB_HOST
       PMA_USER: root
