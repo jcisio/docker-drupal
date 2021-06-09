@@ -40,12 +40,13 @@ if (isset($databases['default']['default']['database']) && !isset($databases['de
 if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
   $_SERVER['HTTPS'] = 'on';
 }
-if (explode('.', VERSION)[0] == 7) {
+$remote_addr = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '127.0.0.1';
+if (defined('VERSION') && explode('.', VERSION)[0] == 7) {
   $conf['reverse_proxy'] = TRUE;
-  $conf['reverse_proxy_addresses'] = [$_SERVER['REMOTE_ADDR']];
+  $conf['reverse_proxy_addresses'] = [$remote_addr];
 }
 else {
   $settings['reverse_proxy'] = TRUE;
-  $settings['reverse_proxy_addresses'] = [$_SERVER['REMOTE_ADDR']];
+  $settings['reverse_proxy_addresses'] = [$remote_addr];
   $settings['trusted_host_patterns'][] = '\.docker\.localhost$';
 } 
