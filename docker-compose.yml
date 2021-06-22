@@ -160,7 +160,7 @@ services:
       - "traefik.http.routers.drupal_solr8.rule=Host(`solr8.$DOCKER_HOST_LOCAL`)"
     volumes:
       - $DOCKER_PATH_WEB:/var/www
-      - $DOCKER_PATH_WEB/cache/solr8.cores:/opt/solr/server/solr/mycores
+      - $DOCKER_PATH_WEB/cache/solr8.cores:/var/solr/data
 
   solr6:
     image: solr:6
