@@ -19,6 +19,9 @@ x-php-environment: &php-environnement
   PHP_XDEBUG_IDEKEY: ide
   PHP_XDEBUG_REMOTE_AUTOSTART: 1
   PHP_XDEBUG_MAX_NESTING_LEVEL: 9999
+  # Xdebug 3
+  PHP_XDEBUG_MODE: "develop,debug"
+  PHP_XDEBUG_START_WITH_REQUEST: "yes"
   # In the following two variables, if "remote connect back" is set to 1, then
   # we don't have to specify remote host when there is a HTTP request, because
   # the server knows where did the request come from. However it does not work
@@ -66,28 +69,30 @@ services:
     <<: *php-base
     build:
       context: ./php
-      args:
-        PHP_VERSION: 5.6
-        WODBY_VERSION: 4.14.3
+      dockerfile: Dockerfile56
     container_name: drupal_php56
+
+  # php7.0:
+  #   <<: *php-base
+  #   build:
+  #     context: ./php
+  #     dockerfile: Dockerfile70
+  #   container_name: drupal_php70
 
   php7.1:
     <<: *php-base
     build:
       context: ./php
-      args:
-        PHP_VERSION: 7.1
-        WODBY_VERSION: 4.14.3
+      dockerfile: Dockerfile71
     container_name: drupal_php71
 
-  php7.2:
-    <<: *php-base
-    build:
-      context: ./php
-      args:
-        PHP_VERSION: 7.2
-        WODBY_VERSION: $WODBY_VERSION
-    container_name: drupal_php72
+  # php7.2:
+  #   <<: *php-base
+  #   build:
+  #     context: ./php
+  #     args:
+  #       PHP_VERSION: 7.2
+  #   container_name: drupal_php72
 
   php7.3:
     <<: *php-base
@@ -95,7 +100,6 @@ services:
       context: ./php
       args:
         PHP_VERSION: 7.3
-        WODBY_VERSION: $WODBY_VERSION
     container_name: drupal_php73
 
   php7.4:
@@ -104,8 +108,15 @@ services:
       context: ./php
       args:
         PHP_VERSION: 7.4
-        WODBY_VERSION: $WODBY_VERSION
     container_name: drupal_php74
+
+  php8.0:
+    <<: *php-base
+    build:
+      context: ./php
+      args:
+        PHP_VERSION: 8.0
+    container_name: drupal_php80
 
   mailhog:
     image: mailhog/mailhog
@@ -119,9 +130,7 @@ services:
     container_name: "drupal_apache"
     depends_on:
       - php5.6
-      - php7.1
-      - php7.2
-      - php7.3
+      - php7.4
     labels:
       - traefik.http.routers.drupal_apache_https.rule=HostRegexp(`{subdomain:.+}.$DOCKER_HOST_LOCAL`)
       - traefik.http.routers.drupal_apache_https.tls=true
@@ -140,7 +149,7 @@ services:
       - "traefik.http.routers.drupal_adminer.rule=Host(`adminer.$DOCKER_HOST_LOCAL`)"
 
   pma:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin/phpmyadmin:5
     container_name: drupal_pma
     environment:
       PMA_HOST: $DB_HOST
@@ -191,9 +200,9 @@ services:
       - $DOCKER_PATH_WEB:/var/www
       - $DOCKER_PATH_WEB/cache/solr4.cores:/opt/solr/example/solr/mycores
 
-#  memcached:
-#    container_name: "drupal_memcached"
-#    image: wodby/memcached:$MEMCACHED_TAG
+  memcached:
+    container_name: "drupal_memcached"
+    image: memcached:1-alpine
 
 #  rsyslog:
 #    container_name: "drupal_rsyslog"
@@ -250,11 +259,14 @@ services:
 #    image: wodby/opensmtpd:$OPENSMTPD_TAG
 
   xhprof:
-    image: wodby/xhprof:$XHPROF_TAG
+    build:
+      context: ./xhprof
+      args:
+        XHPROF_VER: 2.3.5
     container_name: drupal_xhprof
     restart: always
     volumes:
-     - $DOCKER_PATH_WEB/cache:/mnt/files
+      - $DOCKER_PATH_WEB/cache:/mnt/files
     labels:
       - "traefik.http.routers.drupal_xhprof.rule=Host(`xhprof.$DOCKER_HOST_LOCAL`)"
 

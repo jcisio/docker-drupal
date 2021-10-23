@@ -1,6 +1,7 @@
-ARG PHP_VERSION
-FROM wodby/drupal-php:$PHP_VERSION
+FROM wodby/drupal-php:7.0-4.7.5
+
 USER root
+
 RUN set -xe; \
     apk add poppler-utils pv; \
     wget -qO- https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer2; \
