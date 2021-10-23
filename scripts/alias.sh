@@ -35,7 +35,7 @@ DockerGo() {
   else
     CONTAINER=php73
   fi
-  docker exec -it -e SSH_AUTH_SOCK=/ssh-agent drupal_$CONTAINER bash -c "cd ${PWD/#$DOCKER_PATH_WEB/$docker_dest}; exec $args"
+  docker exec -it -u wodby -e SSH_AUTH_SOCK=/ssh-agent drupal_$CONTAINER bash -c "cd ${PWD/#$DOCKER_PATH_WEB/$docker_dest}; exec $args"
 }
 
 DockerExec() {
