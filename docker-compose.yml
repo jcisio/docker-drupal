@@ -46,6 +46,8 @@ x-php-volumes: &php-volumes
 x-php-base: &php-base
   environment: *php-environnement
   volumes: *php-volumes
+  labels:
+    - traefik.enable=false
 
 services:
   mariadb:
@@ -56,6 +58,8 @@ services:
       MYSQL_ROOT_PASSWORD: $DB_ROOT_PASSWORD
       MYSQL_INTERACTIVE_TIMEOUT: $MYSQL_INTERACTIVE_TIMEOUT
       MYSQL_WAIT_TIMEOUT: $MYSQL_WAIT_TIMEOUT
+    labels:
+      - traefik.enable=false
     volumes:
       - $DOCKER_PATH_VOLUMES/mysql:/var/lib/mysql
 
@@ -64,6 +68,8 @@ services:
     container_name: drupal_postgres
     environment:
       POSTGRES_PASSWORD: $DB_ROOT_PASSWORD
+    labels:
+      - traefik.enable=false
 
   php5.6:
     <<: *php-base
@@ -124,19 +130,6 @@ services:
     labels:
       - "traefik.http.services.drupal_mailhog.loadbalancer.server.port=8025"
       - "traefik.http.routers.drupal_mailhog.rule=Host(`mailhog.$DOCKER_HOST_LOCAL`)"
-
-  apache:
-    build: './apache/'
-    container_name: "drupal_apache"
-    depends_on:
-      - php5.6
-      - php7.4
-    labels:
-      - traefik.http.routers.drupal_apache_https.rule=HostRegexp(`{subdomain:.+}.$DOCKER_HOST_LOCAL`)
-      - traefik.http.routers.drupal_apache_https.tls=true
-      - traefik.http.routers.drupal_apache_https.entrypoints=websecure
-    volumes:
-      - $DOCKER_PATH_WEB:/var/www
 
 #  redis:
 #    container_name: "drupal_redis"
@@ -203,6 +196,8 @@ services:
   memcached:
     container_name: "drupal_memcached"
     image: memcached:1-alpine
+    labels:
+      - traefik.enable=false
 
 #  rsyslog:
 #    container_name: "drupal_rsyslog"
@@ -211,12 +206,16 @@ services:
   node:
     build: ./node
     container_name: "drupal_node"
+    labels:
+      - traefik.enable=false
     volumes:
       - $DOCKER_PATH_WEB:/var/www
 
   ruby:
     build: ./ruby
     container_name: "drupal_ruby"
+    labels:
+      - traefik.enable=false
     volumes:
       - $DOCKER_PATH_WEB:/var/www
 
@@ -270,6 +269,23 @@ services:
     labels:
       - "traefik.http.routers.drupal_xhprof.rule=Host(`xhprof.$DOCKER_HOST_LOCAL`)"
 
+  apache:
+    build: './apache/'
+    container_name: "drupal_apache"
+    depends_on:
+      - php5.6
+      - php7.4
+    labels:
+      - traefik.http.routers.drupal_apache_https.rule=HostRegexp(`{subdomain:.+}.$DOCKER_HOST_LOCAL`)
+      - traefik.http.routers.drupal_apache_https.tls=true
+      - traefik.http.routers.drupal_apache_https.entrypoints=websecure
+      - traefik.http.routers.drupal_apache_https.priority=-1
+      - traefik.http.routers.drupal_apache_http.rule=HostRegexp(`{subdomain:.+}.$DOCKER_HOST_LOCAL`)
+      - traefik.http.routers.drupal_apache_http.entrypoints=web
+      - traefik.http.routers.drupal_apache_http.priority=-1
+    volumes:
+      - $DOCKER_PATH_WEB:/var/www
+
   portainer:
     image: portainer/portainer
     container_name: "drupal_portainer"
@@ -277,10 +293,10 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
-      - "traefik.http.routers.drupal_portainer.rule=Host(`portainer.$DOCKER_HOST_LOCAL`)"
+      - traefik.http.routers.drupal_portainer.rule=Host(`portainer.$DOCKER_HOST_LOCAL`)
 
   traefik:
-    image: traefik:v2.0
+    image: traefik:v2.5
     container_name: "drupal_traefik"
     command:
       - --api.insecure=true
@@ -289,9 +305,9 @@ services:
       - --entrypoints.websecure.address=:443
       - --providers.file.directory=/etc/traefik/dynamic_conf
     ports:
-      - '80:80'
-      - '8080:8080'
-      - '443:443'
+      - '127.0.0.1:80:80'
+      - '127.0.0.1:8080:8080'
+      - '127.0.0.1:443:443'
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./traefik/config.yml:/etc/traefik/dynamic_conf/conf.yml:ro
