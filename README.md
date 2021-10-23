@@ -88,13 +88,16 @@ requests.
 
 ## Xhprof
 
-If you use the latest version of [XHProf contrib module](https://www.drupal.org/project/xhprof), then you don't have to do anything. XHProf by Tideways is enabled in PHP by default, and the module is already shipped with a viewer.
+If you use the latest version of [XHProf contrib module](https://www.drupal.org/project/xhprof), then you don't have to do anything. XHProf (by Tideways in older PHP versions, the PECL package in PHP 7.3+) is enabled by default, and the module is already shipped with a viewer.
 
 If you don't, then see https://wodby.com/docs/stacks/php/containers/#xhprof for information. You can use use the following snippet for manual profiling:
 
 ```PHP
 if (extension_loaded('tideways_xhprof')) {
   tideways_xhprof_enable(TIDEWAYS_XHPROF_FLAGS_MEMORY | TIDEWAYS_XHPROF_FLAGS_CPU);
+}
+if (extension_loaded('xhprof')) {
+  xhprof_enable(XHPROF_FLAGS_MEMORY | XHPROF_FLAGS_CPU);
 }
 
 // Code which should be profiled.
@@ -103,11 +106,13 @@ if (extension_loaded('tideways_xhprof')) {
 // Store profile.
 if (extension_loaded('tideways_xhprof')) {
   $xhprof_out = '/mnt/files/private/xhprof';
-  if (!file_exists($xhprof_out)) {
-    mkdir($xhprof_out);
-  }
-
+  file_exists($xhprof_out) || mkdir($xhprof_out);
   file_put_contents(sprintf('%s/%s.%s.xhprof', $xhprof_out, uniqid(), 'web'), serialize(tideways_xhprof_disable()));
+}
+if (extension_loaded('xhprof')) {
+  $xhprof_out = '/mnt/files/private/xhprof';
+  file_exists($xhprof_out) || mkdir($xhprof_out);
+  file_put_contents(sprintf('%s/%s.%s.xhprof', $xhprof_out, uniqid(), 'web'), serialize(xhprof_disable()));
 }
 ```
 
