@@ -131,10 +131,6 @@ services:
       - "traefik.http.services.drupal_mailhog.loadbalancer.server.port=8025"
       - "traefik.http.routers.drupal_mailhog.rule=Host(`mailhog.$DOCKER_HOST_LOCAL`)"
 
-#  redis:
-#    container_name: "drupal_redis"
-#    image: wodby/redis:$REDIS_TAG
-
   adminer:
     image: adminer
     container_name: drupal_adminer
@@ -199,9 +195,11 @@ services:
     labels:
       - traefik.enable=false
 
-#  rsyslog:
-#    container_name: "drupal_rsyslog"
-#    image: wodby/rsyslog:$RSYSLOG_TAG
+  redis:
+    container_name: drupal_redis
+    image: redis:6-alpine
+    labels:
+      - traefik.enable=false
 
   node:
     build: ./node
@@ -218,44 +216,6 @@ services:
       - traefik.enable=false
     volumes:
       - $DOCKER_PATH_WEB:/var/www
-
-  #  blackfire:
-#    image: blackfire/blackfire
-#    container_name: "drupal_blackfire"
-#    environment:
-#      BLACKFIRE_SERVER_ID: XXXXX
-#      BLACKFIRE_SERVER_TOKEN: YYYYY
-
-#  webgrind:
-#    image: wodby/webgrind:$WEBGRIND_TAG
-#    container_name: "drupal_webgrind"
-#    environment:
-#      WEBGRIND_PROFILER_DIR: /mnt/files/xdebug/profiler
-#    labels:
-#      - "traefik.http.routers.drupal_webgrind.rule=Host(`webgrind.$DOCKER_HOST_LOCAL`)"
-#    volumes:
-#      - files:/mnt/files
-
-#  elasticsearch:
-#    image: wodby/elasticsearch:$ELASTICSEARCH_TAG
-#    environment:
-#      ES_JAVA_OPTS: "-Xms500m -Xmx500m"
-#    ulimits:
-#      memlock:
-#        soft: -1
-#        hard: -1
-
-#  kibana:
-#    image: wodby/kibana:$KIBANA_TAG
-#    depends_on:
-#      - elasticsearch
-#    labels:
-#      - "traefik.http.services.drupal_kibana.loadbalancer.server.port=5601"
-#      - "traefik.http.routers.drupal_kibana.rule=Host(`kibana.$DOCKER_HOST_LOCAL`)"
-
-#  opensmtpd:
-#    container_name: "drupal_opensmtpd"
-#    image: wodby/opensmtpd:$OPENSMTPD_TAG
 
   xhprof:
     build:
