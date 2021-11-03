@@ -22,6 +22,8 @@ x-php-environment: &php-environnement
   # Xdebug 3
   PHP_XDEBUG_MODE: "develop,debug"
   PHP_XDEBUG_START_WITH_REQUEST: "yes"
+  PHP_XDEBUG_LOG: /tmp/php-xdebug.log
+  PHP_XDEBUG_LOG_LEVEL: 7
   # In the following two variables, if "remote connect back" is set to 1, then
   # we don't have to specify remote host when there is a HTTP request, because
   # the server knows where did the request come from. However it does not work
